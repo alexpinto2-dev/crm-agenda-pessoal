@@ -1,13 +1,26 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { ArrowRight, BarChart3, Calendar, Users, MessageSquare, LogOut } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Users, MessageSquare, LogOut, Chrome } from "lucide-react";
+import { useEffect } from "react";
 
 export default function Home() {
   const { user, isAuthenticated, logout } = useAuth();
   const [, navigate] = useLocation();
 
+  // Redirecionar para dashboard se autenticado
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      navigate("/dashboard");
+    }
+  }, [isAuthenticated, user, navigate]);
+
   if (!isAuthenticated) {
+    const handleGoogleLogin = () => {
+      // Usar o fluxo OAuth padrão da Manus
+      window.location.href = "/api/oauth/login";
+    };
+
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4">
         <div className="max-w-2xl w-full text-center space-y-8">
@@ -26,16 +39,21 @@ export default function Home() {
               </p>
             </div>
 
-            <Button
-              size="lg"
-              onClick={() => {
-                window.location.href = "/api/oauth/login";
-              }}
-              className="w-full"
-            >
-              Fazer Login com Manus
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="space-y-3">
+              <Button
+                size="lg"
+                onClick={handleGoogleLogin}
+                className="w-full bg-white dark:bg-slate-700 text-foreground border border-border hover:bg-gray-50 dark:hover:bg-slate-600"
+              >
+                <Chrome className="mr-2 h-5 w-5" />
+                Entrar com Google
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+
+              <p className="text-xs text-muted-foreground">
+                Você será redirecionado para autenticação segura
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8">
@@ -59,6 +77,12 @@ export default function Home() {
               <h3 className="font-semibold mb-2">Assistente IA</h3>
               <p className="text-sm text-muted-foreground">Chat inteligente para gerenciar seu CRM</p>
             </div>
+          </div>
+
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <p className="text-sm text-blue-900 dark:text-blue-100">
+              💡 <strong>Dica:</strong> Use sua conta Google para fazer login de forma rápida e segura
+            </p>
           </div>
         </div>
       </div>

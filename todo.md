@@ -88,3 +88,8 @@
 - [ ] Documentação de uso
 - [ ] Checkpoint final
 - [ ] Deploy/Publicação
+
+## Autenticação
+- [x] Integrar login com Google
+- [x] Corrigir fluxo de autenticação
+- [x] Testar login e redirect
