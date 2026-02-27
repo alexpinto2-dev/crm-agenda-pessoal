@@ -25,4 +25,96 @@ export const users = mysqlTable("users", {
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
-// TODO: Add your tables here
+/**
+ * Clientes e Leads
+ */
+export const clients = mysqlTable("clients", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 20 }),
+  company: varchar("company", { length: 255 }),
+  status: mysqlEnum("status", ["lead", "prospect", "customer", "inactive"]).default("lead").notNull(),
+  pipelineStage: varchar("pipelineStage", { length: 50 }).default("initial").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Client = typeof clients.$inferSelect;
+export type InsertClient = typeof clients.$inferInsert;
+
+/**
+ * Compromissos/Agenda
+ */
+export const appointments = mysqlTable("appointments", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  clientId: int("clientId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description"),
+  type: mysqlEnum("type", ["meeting", "call", "email", "task", "other"]).default("meeting").notNull(),
+  startTime: timestamp("startTime").notNull(),
+  endTime: timestamp("endTime"),
+  location: varchar("location", { length: 255 }),
+  status: mysqlEnum("appointmentStatus", ["scheduled", "completed", "cancelled", "rescheduled"]).default("scheduled").notNull(),
+  notificationMinutes: int("notificationMinutes").default(15),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Appointment = typeof appointments.$inferSelect;
+export type InsertAppointment = typeof appointments.$inferInsert;
+
+/**
+ * Historico de Interacoes
+ */
+export const interactions = mysqlTable("interactions", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  clientId: int("clientId").notNull(),
+  type: mysqlEnum("interactionType", ["meeting", "call", "email", "note", "other"]).default("note").notNull(),
+  title: varchar("title", { length: 255 }).notNull(),
+  content: text("content").notNull(),
+  appointmentId: int("appointmentId"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Interaction = typeof interactions.$inferSelect;
+export type InsertInteraction = typeof interactions.$inferInsert;
+
+/**
+ * Pipeline de Vendas
+ */
+export const pipelineStages = mysqlTable("pipelineStages", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  name: varchar("name", { length: 100 }).notNull(),
+  order: int("order").notNull(),
+  color: varchar("color", { length: 7 }).default("#3B82F6"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type PipelineStage = typeof pipelineStages.$inferSelect;
+export type InsertPipelineStage = typeof pipelineStages.$inferInsert;
+
+/**
+ * Notificacoes
+ */
+export const notifications = mysqlTable("notifications", {
+  id: int("id").autoincrement().primaryKey(),
+  userId: int("userId").notNull(),
+  appointmentId: int("appointmentId"),
+  clientId: int("clientId"),
+  title: varchar("title", { length: 255 }).notNull(),
+  message: text("message"),
+  type: mysqlEnum("notificationType", ["appointment_reminder", "followup", "inactive_client", "other"]).default("other").notNull(),
+  read: int("read").default(0),
+  scheduledFor: timestamp("scheduledFor"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type Notification = typeof notifications.$inferSelect;
+export type InsertNotification = typeof notifications.$inferInsert;

@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -119,6 +120,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    @apply font-bold tracking-tight;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -158,6 +164,27 @@
   .flex {
     min-height: 0;
     min-width: 0;
+  }
+
+  /* Elegant & Professional Components */
+  .glass {
+    @apply backdrop-blur-md bg-white/30 dark:bg-slate-900/30 border border-white/20 dark:border-slate-700/20;
+  }
+
+  .shadow-elegant {
+    @apply shadow-lg shadow-black/5 dark:shadow-black/20;
+  }
+
+  .shadow-card {
+    @apply shadow-md shadow-black/3 dark:shadow-black/10;
+  }
+
+  .gradient-text {
+    @apply bg-gradient-to-r from-blue-600 to-blue-400 bg-clip-text text-transparent;
+  }
+
+  .badge-status {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
   }
 
   @media (min-width: 640px) {

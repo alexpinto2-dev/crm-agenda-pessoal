@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { eq, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, clients, appointments, interactions } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -89,4 +89,49 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+/**
+ * Clients queries
+ */
+export async function getUserClients(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(clients).where(eq(clients.userId, userId));
+}
+
+export async function getClientById(clientId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(clients).where(eq(clients.id, clientId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Appointments queries
+ */
+export async function getUserAppointments(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(appointments).where(eq(appointments.userId, userId));
+}
+
+export async function getAppointmentsByDate(userId: number, startDate: Date, endDate: Date) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(appointments)
+    .where(
+      and(
+        eq(appointments.userId, userId),
+        gte(appointments.startTime, startDate),
+        lte(appointments.startTime, endDate)
+      )
+    );
+}
+
+/**
+ * Interactions queries
+ */
+export async function getClientInteractions(clientId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(interactions).where(eq(interactions.clientId, clientId));
+}
