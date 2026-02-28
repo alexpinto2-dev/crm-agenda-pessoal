@@ -250,14 +250,14 @@ export default function Calendar() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Cliente (Opcional)</FormLabel>
-                        <Select onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} defaultValue={field.value?.toString()}>
+                        <Select onValueChange={(v) => field.onChange(v && v !== "none" ? parseInt(v) : undefined)} defaultValue={field.value?.toString() || "none"}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Selecione um cliente" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">Sem cliente</SelectItem>
+                            <SelectItem value="none">Sem cliente</SelectItem>
                             {clients.map(client => (
                               <SelectItem key={client.id} value={client.id.toString()}>
                                 {client.name}
