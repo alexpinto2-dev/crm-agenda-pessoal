@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Plus, ChevronLeft, ChevronRight, Trash2, Edit2, Calendar as CalendarIcon } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Trash2, Edit2, Calendar as CalendarIcon, Clock, MapPin, User } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const appointmentSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
@@ -32,6 +33,7 @@ export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"calendar" | "list">("calendar");
 
   const { data: appointments = [], refetch } = trpc.appointments.list.useQuery();
   const { data: clients = [] } = trpc.clients.list.useQuery();
@@ -56,7 +58,6 @@ export default function Calendar() {
   const monthEnd = endOfMonth(currentMonth);
   const daysInMonth = eachDayOfInterval({ start: monthStart, end: monthEnd });
 
-  // Preencher com dias do mês anterior e próximo
   const firstDayOfWeek = monthStart.getDay();
   const lastDayOfWeek = monthEnd.getDay();
   const previousMonthDays = Array.from({ length: firstDayOfWeek }, (_, i) => {
@@ -74,6 +75,32 @@ export default function Calendar() {
 
   const getAppointmentsForDate = (date: Date) => {
     return appointments.filter(a => isSameDay(new Date(a.startTime), date));
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "meeting":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
+      case "call":
+        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
+      case "email":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100";
+      case "task":
+        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100";
+    }
+  };
+
+  const getTypeLabel = (type: string) => {
+    const labels: Record<string, string> = {
+      meeting: "Reunião",
+      call: "Ligação",
+      email: "Email",
+      task: "Tarefa",
+      other: "Outro",
+    };
+    return labels[type] || type;
   };
 
   const onSubmit = async (data: AppointmentFormData) => {
@@ -107,46 +134,26 @@ export default function Calendar() {
     }
   };
 
-  const handleNewAppointment = (date: Date) => {
-    setSelectedDate(date);
+  const handleEdit = (appointment: typeof appointments[0]) => {
     form.reset({
-      title: "",
-      description: "",
-      type: "meeting",
-      startTime: date,
-      endTime: undefined,
-      location: "",
-      clientId: undefined,
+      title: appointment.title,
+      description: appointment.description || "",
+      type: appointment.type as any,
+      startTime: new Date(appointment.startTime),
+      endTime: appointment.endTime ? new Date(appointment.endTime) : undefined,
+      location: appointment.location || "",
+      clientId: appointment.clientId || undefined,
     });
-    setEditingId(null);
+    setEditingId(appointment.id);
     setIsOpen(true);
   };
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "meeting":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
-      case "call":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
-      case "email":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100";
-      case "task":
-        return "bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-100";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  const upcomingAppointments = appointments
+    .filter(a => new Date(a.startTime) >= new Date())
+    .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
+    .slice(0, 5);
 
-  const getTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      meeting: "Reunião",
-      call: "Ligação",
-      email: "Email",
-      task: "Tarefa",
-      other: "Outro",
-    };
-    return labels[type] || type;
-  };
+  const weekDays = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"];
 
   return (
     <DashboardLayout>
@@ -155,11 +162,11 @@ export default function Calendar() {
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Agenda</h1>
-            <p className="text-muted-foreground">Gerencie seus compromissos</p>
+            <p className="text-muted-foreground">Gerencie seus compromissos e reuniões</p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => handleNewAppointment(new Date())}>
+              <Button onClick={() => { setEditingId(null); form.reset(); }}>
                 <Plus className="mr-2 h-4 w-4" />
                 Novo Compromisso
               </Button>
@@ -168,7 +175,7 @@ export default function Calendar() {
               <DialogHeader>
                 <DialogTitle>{editingId ? "Editar Compromisso" : "Novo Compromisso"}</DialogTitle>
                 <DialogDescription>
-                  {editingId ? "Atualize os detalhes do compromisso" : "Crie um novo compromisso"}
+                  {editingId ? "Atualize as informações do compromisso" : "Crie um novo compromisso ou reunião"}
                 </DialogDescription>
               </DialogHeader>
               <Form {...form}>
@@ -215,9 +222,9 @@ export default function Calendar() {
                     name="startTime"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Data e Hora</FormLabel>
+                        <FormLabel>Data/Hora Início</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} value={field.value?.toISOString().slice(0, 16)} onChange={(e) => field.onChange(new Date(e.target.value))} />
+                          <Input type="datetime-local" {...field} value={field.value ? format(field.value, "yyyy-MM-dd'T'HH:mm") : ""} onChange={(e) => field.onChange(new Date(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -230,7 +237,7 @@ export default function Calendar() {
                       <FormItem>
                         <FormLabel>Local</FormLabel>
                         <FormControl>
-                          <Input placeholder="Local do compromisso" {...field} />
+                          <Input placeholder="Local da reunião" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -249,6 +256,7 @@ export default function Calendar() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
+                            <SelectItem value="">Sem cliente</SelectItem>
                             {clients.map(client => (
                               <SelectItem key={client.id} value={client.id.toString()}>
                                 {client.name}
@@ -267,7 +275,7 @@ export default function Calendar() {
                       <FormItem>
                         <FormLabel>Descrição</FormLabel>
                         <FormControl>
-                          <textarea placeholder="Detalhes do compromisso" className="w-full px-3 py-2 border border-input rounded-md" {...field} />
+                          <textarea placeholder="Descrição do compromisso" className="w-full px-3 py-2 border border-input rounded-md" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -287,113 +295,204 @@ export default function Calendar() {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Calendário */}
-          <Card className="lg:col-span-2 shadow-card">
-            <CardHeader>
-              <div className="flex items-center justify-between">
-                <CardTitle>{format(currentMonth, "MMMM yyyy", { locale: ptBR })}</CardTitle>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date())}>
-                    Hoje
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-7 gap-2">
-                {["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sab"].map(day => (
-                  <div key={day} className="text-center font-semibold text-sm text-muted-foreground py-2">
-                    {day}
+        {/* Tabs */}
+        <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-full">
+          <TabsList>
+            <TabsTrigger value="calendar">Calendário</TabsTrigger>
+            <TabsTrigger value="list">Lista</TabsTrigger>
+          </TabsList>
+
+          {/* Vista Calendário */}
+          <TabsContent value="calendar" className="space-y-6">
+            <Card className="shadow-card">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle>{format(currentMonth, "MMMM yyyy", { locale: ptBR })}</CardTitle>
+                    <CardDescription>Clique em um dia para criar um compromisso</CardDescription>
                   </div>
-                ))}
-                {allDays.map((day, idx) => {
-                  const dayAppointments = getAppointmentsForDate(day);
-                  const isCurrentMonth = isSameMonth(day, currentMonth);
-                  const isTodayDate = isToday(day);
-
-                  return (
-                    <div
-                      key={idx}
-                      onClick={() => handleNewAppointment(day)}
-                      className={`min-h-24 p-2 border rounded-lg cursor-pointer transition-colors ${
-                        isCurrentMonth ? "bg-card hover:bg-muted" : "bg-muted/50 text-muted-foreground"
-                      } ${isTodayDate ? "border-blue-500 bg-blue-50 dark:bg-blue-950" : "border-border"}`}
-                    >
-                      <p className={`text-sm font-semibold ${isTodayDate ? "text-blue-600" : ""}`}>
-                        {format(day, "d")}
-                      </p>
-                      <div className="mt-1 space-y-1">
-                        {dayAppointments.slice(0, 2).map(apt => (
-                          <div
-                            key={apt.id}
-                            onClick={(e) => e.stopPropagation()}
-                            className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 ${getTypeColor(apt.type)}`}
-                          >
-                            {apt.title}
-                          </div>
-                        ))}
-                        {dayAppointments.length > 2 && (
-                          <p className="text-xs text-muted-foreground">+{dayAppointments.length - 2} mais</p>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Próximos Compromissos */}
-          <Card className="shadow-card">
-            <CardHeader>
-              <CardTitle className="text-lg">Próximos</CardTitle>
-              <CardDescription>Compromissos agendados</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {appointments
-                  .filter(a => new Date(a.startTime) >= new Date())
-                  .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime())
-                  .slice(0, 5)
-                  .map(apt => (
-                    <div key={apt.id} className="p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors">
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="flex-1">
-                          <p className="font-medium text-sm">{apt.title}</p>
-                          <p className="text-xs text-muted-foreground mt-1">
-                            {format(new Date(apt.startTime), "dd/MM HH:mm", { locale: ptBR })}
-                          </p>
-                        </div>
-                        <span className={`badge-status text-xs ${getTypeColor(apt.type)}`}>
-                          {getTypeLabel(apt.type)}
-                        </span>
-                      </div>
-                      <div className="flex gap-1 mt-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={() => handleDelete(apt.id)}
-                        >
-                          <Trash2 className="h-3 w-3 text-red-600" />
-                        </Button>
-                      </div>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}>
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentMonth(new Date())}>
+                      Hoje
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentMonth(addMonths(currentMonth, 1))}>
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {/* Cabeçalho dos dias da semana */}
+                <div className="grid grid-cols-7 gap-2 mb-2">
+                  {weekDays.map(day => (
+                    <div key={day} className="text-center font-semibold text-sm text-muted-foreground py-2">
+                      {day}
                     </div>
                   ))}
-                {appointments.filter(a => new Date(a.startTime) >= new Date()).length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-4">Nenhum compromisso agendado</p>
+                </div>
+
+                {/* Grid de dias */}
+                <div className="grid grid-cols-7 gap-2">
+                  {allDays.map((day, idx) => {
+                    const dayAppointments = getAppointmentsForDate(day);
+                    const isCurrentMonth = isSameMonth(day, currentMonth);
+                    const isDayToday = isToday(day);
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => {
+                          setSelectedDate(day);
+                          setEditingId(null);
+                          form.reset({ ...form.getValues(), startTime: day });
+                          setIsOpen(true);
+                        }}
+                        className={`min-h-[100px] p-2 rounded-lg border-2 cursor-pointer transition-all ${
+                          isDayToday
+                            ? "border-blue-500 bg-blue-50 dark:bg-blue-900/20"
+                            : isCurrentMonth
+                            ? "border-border bg-white dark:bg-slate-800 hover:border-blue-300"
+                            : "border-border bg-muted/30 opacity-50"
+                        }`}
+                      >
+                        <p className={`text-sm font-semibold mb-1 ${isDayToday ? "text-blue-600 dark:text-blue-400" : ""}`}>
+                          {format(day, "d")}
+                        </p>
+                        <div className="space-y-1">
+                          {dayAppointments.slice(0, 2).map((apt) => (
+                            <div
+                              key={apt.id}
+                              className={`text-xs p-1 rounded truncate cursor-pointer hover:opacity-80 ${getTypeColor(apt.type)}`}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleEdit(apt);
+                              }}
+                            >
+                              {apt.title}
+                            </div>
+                          ))}
+                          {dayAppointments.length > 2 && (
+                            <p className="text-xs text-muted-foreground">+{dayAppointments.length - 2} mais</p>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Próximos Compromissos */}
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Próximos Compromissos</CardTitle>
+                <CardDescription>Seus próximos 5 compromissos agendados</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {upcomingAppointments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">Nenhum compromisso agendado</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {upcomingAppointments.map((apt) => (
+                      <div key={apt.id} className="flex items-start justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeColor(apt.type)}`}>
+                              {getTypeLabel(apt.type)}
+                            </span>
+                            <p className="font-semibold">{apt.title}</p>
+                          </div>
+                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                            <div className="flex items-center gap-1">
+                              <Clock className="h-3 w-3" />
+                              {format(new Date(apt.startTime), "dd/MM/yyyy HH:mm")}
+                            </div>
+                            {apt.location && (
+                              <div className="flex items-center gap-1">
+                                <MapPin className="h-3 w-3" />
+                                {apt.location}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleEdit(apt)}>
+                            <Edit2 className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDelete(apt.id)}>
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 )}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Vista Lista */}
+          <TabsContent value="list" className="space-y-6">
+            <Card className="shadow-card">
+              <CardHeader>
+                <CardTitle>Todos os Compromissos</CardTitle>
+                <CardDescription>Lista completa de seus compromissos</CardDescription>
+              </CardHeader>
+              <CardContent>
+                {appointments.length === 0 ? (
+                  <div className="text-center py-8">
+                    <CalendarIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">Nenhum compromisso criado</p>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {appointments
+                      .sort((a, b) => new Date(b.startTime).getTime() - new Date(a.startTime).getTime())
+                      .map((apt) => (
+                        <div key={apt.id} className="flex items-start justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3 mb-2">
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${getTypeColor(apt.type)}`}>
+                                {getTypeLabel(apt.type)}
+                              </span>
+                              <p className="font-semibold">{apt.title}</p>
+                            </div>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                              <div className="flex items-center gap-1">
+                                <Clock className="h-3 w-3" />
+                                {format(new Date(apt.startTime), "dd/MM/yyyy HH:mm")}
+                              </div>
+                              {apt.location && (
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-3 w-3" />
+                                  {apt.location}
+                                </div>
+                              )}
+                            </div>
+                            {apt.description && <p className="text-sm text-muted-foreground mt-2">{apt.description}</p>}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button variant="ghost" size="sm" onClick={() => handleEdit(apt)}>
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete(apt.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </DashboardLayout>
   );

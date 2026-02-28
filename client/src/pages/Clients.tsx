@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Plus, Search, Mail, Phone, Building2, Trash2, Edit2, ChevronRight } from "lucide-react";
+import { Plus, Search, Mail, Phone, Building2, Trash2, Edit2, ChevronRight, Users, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { useLocation } from "wouter";
@@ -13,10 +13,11 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const clientSchema = z.object({
   name: z.string().min(1, "Nome é obrigatório"),
-  email: z.string().email().optional().or(z.literal("")),
+  email: z.string().email("Email inválido").optional().or(z.literal("")),
   phone: z.string().optional(),
   company: z.string().optional(),
   status: z.enum(["lead", "prospect", "customer", "inactive"]),
@@ -31,6 +32,7 @@ export default function Clients() {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [isOpen, setIsOpen] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [viewMode, setViewMode] = useState<"list" | "kanban">("list");
 
   const { data: clients = [], refetch } = trpc.clients.list.useQuery();
   const createMutation = trpc.clients.create.useMutation();
@@ -124,14 +126,27 @@ export default function Clients() {
     return labels[status] || status;
   };
 
+  const statusGroups = {
+    lead: clients.filter(c => c.status === "lead"),
+    prospect: clients.filter(c => c.status === "prospect"),
+    customer: clients.filter(c => c.status === "customer"),
+    inactive: clients.filter(c => c.status === "inactive"),
+  };
+
+  const stats = [
+    { label: "Total de Clientes", value: clients.filter(c => c.status === "customer").length, icon: Users, color: "text-green-600" },
+    { label: "Prospects", value: clients.filter(c => c.status === "prospect").length, icon: TrendingUp, color: "text-purple-600" },
+    { label: "Leads", value: clients.filter(c => c.status === "lead").length, icon: Users, color: "text-blue-600" },
+  ];
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Clientes</h1>
-            <p className="text-muted-foreground">Gerencie seus clientes e leads</p>
+            <h1 className="text-3xl font-bold tracking-tight">Clientes & Leads</h1>
+            <p className="text-muted-foreground">Gerencie seu pipeline de vendas</p>
           </div>
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
@@ -251,6 +266,23 @@ export default function Clients() {
           </Dialog>
         </div>
 
+        {/* Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {stats.map((stat) => (
+            <Card key={stat.label} className="shadow-card">
+              <CardContent className="pt-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">{stat.label}</p>
+                    <p className="text-3xl font-bold mt-2">{stat.value}</p>
+                  </div>
+                  <stat.icon className={`h-8 w-8 ${stat.color}`} />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+
         {/* Filtros */}
         <Card className="shadow-card">
           <CardContent className="pt-6">
@@ -276,73 +308,162 @@ export default function Clients() {
                   <SelectItem value="inactive">Inativo</SelectItem>
                 </SelectContent>
               </Select>
+              <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-full md:w-auto">
+                <TabsList>
+                  <TabsTrigger value="list">Lista</TabsTrigger>
+                  <TabsTrigger value="kanban">Kanban</TabsTrigger>
+                </TabsList>
+              </Tabs>
             </div>
           </CardContent>
         </Card>
 
-        {/* Lista de Clientes */}
-        <Card className="shadow-card">
-          <CardHeader>
-            <CardTitle>Clientes ({filteredClients.length})</CardTitle>
-            <CardDescription>Todos os seus clientes e leads</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {filteredClients.length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-muted-foreground">Nenhum cliente encontrado</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                {filteredClients.map((client) => (
-                  <div key={client.id} className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate(`/clients/${client.id}`)}>
-                    <div className="flex-1">
-                      <p className="font-semibold">{client.name}</p>
-                      <div className="flex flex-wrap gap-3 mt-2 text-sm text-muted-foreground">
-                        {client.email && (
-                          <div className="flex items-center gap-1">
-                            <Mail className="h-3 w-3" />
-                            {client.email}
+        {/* Vista de Lista */}
+        {viewMode === "list" && (
+          <Card className="shadow-card">
+            <CardHeader>
+              <CardTitle>Clientes ({filteredClients.length})</CardTitle>
+              <CardDescription>Todos os seus clientes e leads</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {filteredClients.length === 0 ? (
+                <div className="text-center py-12">
+                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground">Nenhum cliente encontrado</p>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {filteredClients.map((client) => (
+                    <div
+                      key={client.id}
+                      className="flex items-center justify-between p-4 border border-border rounded-lg hover:bg-muted/50 transition-colors cursor-pointer"
+                      onClick={() => navigate(`/clients/${client.id}`)}
+                    >
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold">
+                            {client.name.charAt(0).toUpperCase()}
                           </div>
-                        )}
-                        {client.phone && (
-                          <div className="flex items-center gap-1">
-                            <Phone className="h-3 w-3" />
-                            {client.phone}
+                          <div>
+                            <p className="font-semibold">{client.name}</p>
+                            <div className="flex items-center gap-4 text-sm text-muted-foreground mt-1">
+                              {client.email && (
+                                <div className="flex items-center gap-1">
+                                  <Mail className="h-3 w-3" />
+                                  {client.email}
+                                </div>
+                              )}
+                              {client.phone && (
+                                <div className="flex items-center gap-1">
+                                  <Phone className="h-3 w-3" />
+                                  {client.phone}
+                                </div>
+                              )}
+                              {client.company && (
+                                <div className="flex items-center gap-1">
+                                  <Building2 className="h-3 w-3" />
+                                  {client.company}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                        )}
-                        {client.company && (
-                          <div className="flex items-center gap-1">
-                            <Building2 className="h-3 w-3" />
-                            {client.company}
-                          </div>
-                        )}
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(client.status)}`}>
+                          {getStatusLabel(client.status)}
+                        </span>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(client);
+                          }}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(client.id);
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className={`badge-status ${getStatusColor(client.status)}`}>
-                        {getStatusLabel(client.status)}
-                      </span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleEdit(client)}
-                      >
-                        <Edit2 className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(client.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Vista Kanban */}
+        {viewMode === "kanban" && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {Object.entries(statusGroups).map(([status, statusClients]) => (
+              <div key={status} className="bg-muted/50 rounded-lg p-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold flex items-center gap-2">
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(status)}`}>
+                      {getStatusLabel(status)}
+                    </span>
+                    <span className="text-sm text-muted-foreground">({statusClients.length})</span>
+                  </h3>
+                </div>
+                <div className="space-y-2">
+                  {statusClients.map((client) => (
+                    <div
+                      key={client.id}
+                      className="bg-white dark:bg-slate-800 rounded-lg p-3 shadow-card hover:shadow-elegant transition-all cursor-pointer"
+                      onClick={() => navigate(`/clients/${client.id}`)}
+                    >
+                      <div className="flex items-start gap-2">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                          {client.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm truncate">{client.name}</p>
+                          {client.company && <p className="text-xs text-muted-foreground truncate">{client.company}</p>}
+                          {client.email && <p className="text-xs text-muted-foreground truncate">{client.email}</p>}
+                        </div>
+                      </div>
+                      <div className="flex gap-1 mt-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEdit(client);
+                          }}
+                        >
+                          <Edit2 className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 w-7 p-0"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(client.id);
+                          }}
+                        >
+                          <Trash2 className="h-3 w-3 text-red-500" />
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            )}
-          </CardContent>
-        </Card>
+            ))}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

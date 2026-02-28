@@ -37,21 +37,21 @@
 - [x] Listagem com paginação
 - [x] Filtros por status, empresa, data de criação
 - [x] Busca avançada
-- [ ] Visualização de detalhes do cliente
+- [x] Visualização de detalhes do cliente
 - [x] Edição de informações
-- [ ] Pipeline visual (kanban ou tabela)
-- [ ] Mover clientes entre estágios
+- [x] Pipeline visual (kanban ou tabela)
+- [x] Mover clientes entre estágios
 - [x] Adicionar notas rápidas
 
 ## Agenda Integrada
 - [x] Calendário mensal interativo
 - [x] Visualização de lista de compromissos
 - [x] Criar novo compromisso
-- [ ] Editar compromisso
+- [x] Editar compromisso
 - [x] Deletar compromisso
 - [x] Filtrar por tipo (reunião, ligação, email)
-- [ ] Visualizar compromissos por cliente
-- [ ] Sistema de notificações (15min, 1h, 1 dia antes)
+- [x] Visualizar compromissos por cliente
+- [x] Sistema de notificações (15min, 1h, 1 dia antes)
 
 ## Histórico de Interações
 - [ ] Timeline de interações por cliente
@@ -63,14 +63,14 @@
 - [ ] Visualizar histórico completo
 
 ## Assistente Pessoal com IA
-- [ ] Interface de chat inteligente
-- [ ] Criar compromissos via linguagem natural
-- [ ] Buscar clientes por descrição
-- [ ] Sugerir próximos passos
-- [ ] Organizar informações automaticamente
-- [ ] Integração com LLM (invokeLLM)
-- [ ] Histórico de conversas
-- [ ] Respostas contextualizadas com dados do CRM
+- [x] Interface de chat inteligente
+- [x] Criar compromissos via linguagem natural
+- [x] Buscar clientes por descrição
+- [x] Sugerir próximos passos
+- [x] Organizar informações automaticamente
+- [x] Integração com LLM (invokeLLM)
+- [x] Histórico de conversas
+- [x] Respostas contextualizadas com dados do CRM
 
 ## Notificações
 - [ ] Lembretes de compromissos próximos
