@@ -200,20 +200,18 @@ export default function Calendar() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tipo</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="meeting">Reunião</SelectItem>
-                            <SelectItem value="call">Ligação</SelectItem>
-                            <SelectItem value="email">Email</SelectItem>
-                            <SelectItem value="task">Tarefa</SelectItem>
-                            <SelectItem value="other">Outro</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <select 
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            {...field}
+                          >
+                            <option value="meeting">Reunião</option>
+                            <option value="call">Ligação</option>
+                            <option value="email">Email</option>
+                            <option value="task">Tarefa</option>
+                            <option value="other">Outro</option>
+                          </select>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -250,21 +248,20 @@ export default function Calendar() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Cliente (Opcional)</FormLabel>
-                        <Select onValueChange={(v) => field.onChange(v && v !== "none" ? parseInt(v) : undefined)} defaultValue={field.value?.toString() || "none"}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione um cliente" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="none">Sem cliente</SelectItem>
+                        <FormControl>
+                          <select 
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            value={field.value?.toString() || "none"}
+                            onChange={(e) => field.onChange(e.target.value === "none" ? undefined : parseInt(e.target.value))}
+                          >
+                            <option value="none">Sem cliente</option>
                             {clients.map(client => (
-                              <SelectItem key={client.id} value={client.id.toString()}>
+                              <option key={client.id} value={client.id.toString()}>
                                 {client.name}
-                              </SelectItem>
+                              </option>
                             ))}
-                          </SelectContent>
-                        </Select>
+                          </select>
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}

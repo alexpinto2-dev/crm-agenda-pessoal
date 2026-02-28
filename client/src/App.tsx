@@ -10,6 +10,7 @@ import Clients from "./pages/Clients";
 import ClientDetails from "./pages/ClientDetails";
 import Calendar from "./pages/Calendar";
 import Assistant from "./pages/Assistant";
+import ExternalAssistant from "./pages/ExternalAssistant";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -21,6 +22,7 @@ function Router() {
       <Route path="/clients/:id" component={ClientDetails} />
       <Route path="/calendar" component={Calendar} />
       <Route path="/assistant" component={Assistant} />
+      <Route path="/agendar" component={ExternalAssistant} />
       <Route path="/404" component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
