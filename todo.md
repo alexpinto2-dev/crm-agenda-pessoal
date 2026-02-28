@@ -93,3 +93,9 @@
 - [x] Integrar login com Google
 - [x] Corrigir fluxo de autenticação
 - [x] Testar login e redirect
+
+
+## Bugs Encontrados
+- [x] Erro 404 ao acessar página
+- [x] Login não está funcionando
+- [x] Roteamento quebrado

@@ -3,22 +3,35 @@ import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 import { ArrowRight, BarChart3, Calendar, Users, MessageSquare, LogOut, Chrome } from "lucide-react";
 import { useEffect } from "react";
+import { getLoginUrl } from "@/const";
 
 export default function Home() {
-  const { user, isAuthenticated, logout } = useAuth();
+  const { user, isAuthenticated, logout, loading } = useAuth();
   const [, navigate] = useLocation();
 
   // Redirecionar para dashboard se autenticado
   useEffect(() => {
-    if (isAuthenticated && user) {
+    if (isAuthenticated && user && !loading) {
       navigate("/dashboard");
     }
-  }, [isAuthenticated, user, navigate]);
+  }, [isAuthenticated, user, navigate, loading]);
+
+  // Mostrar tela de carregamento
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     const handleGoogleLogin = () => {
       // Usar o fluxo OAuth padrão da Manus
-      window.location.href = "/api/oauth/login";
+      window.location.href = getLoginUrl();
     };
 
     return (
