@@ -120,10 +120,15 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database not available");
         
-        return db.insert(appointments).values({
-          userId: ctx.user.id,
-          ...input,
-        });
+        try {
+          return await db.insert(appointments).values({
+            userId: ctx.user.id,
+            ...input,
+          });
+        } catch (error) {
+          console.error("[Appointments] Erro ao criar compromisso:", error);
+          throw error;
+        }
       }),
 
     update: protectedProcedure

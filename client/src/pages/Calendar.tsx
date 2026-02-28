@@ -117,8 +117,9 @@ export default function Calendar() {
       setEditingId(null);
       setSelectedDate(null);
       refetch();
-    } catch (error) {
-      toast.error("Erro ao salvar compromisso");
+    } catch (error: any) {
+      console.error("Erro detalhado ao salvar compromisso:", error);
+      toast.error(`Erro ao salvar compromisso: ${error.message || "Erro desconhecido"}`);
     }
   };
 
@@ -224,7 +225,7 @@ export default function Calendar() {
                       <FormItem>
                         <FormLabel>Data/Hora Início</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} value={field.value ? format(field.value, "yyyy-MM-dd'T'HH:mm") : ""} onChange={(e) => field.onChange(new Date(e.target.value))} />
+                          <Input type="datetime-local" {...field} value={field.value instanceof Date && !isNaN(field.value.getTime()) ? format(field.value, "yyyy-MM-dd'T'HH:mm") : ""} onChange={(e) => { const d = new Date(e.target.value); if(!isNaN(d.getTime())) field.onChange(d); }} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
