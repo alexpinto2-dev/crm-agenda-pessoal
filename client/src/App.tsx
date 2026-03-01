@@ -6,11 +6,11 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
-import Clients from "./pages/Clients";
 import ClientDetails from "./pages/ClientDetails";
+import Clients from "./pages/Clients";
 import Calendar from "./pages/Calendar";
 import Assistant from "./pages/Assistant";
-
+import Webhooks from "./pages/Webhooks";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -20,9 +20,9 @@ function Router() {
       <Route path="/clients" component={Clients} />
       <Route path="/clients/:id" component={ClientDetails} />
       <Route path="/calendar" component={Calendar} />
-      <Route path="/assistant" component={Assistant} />
-      <Route path="/404" component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/assistente" component={Assistant} />
+      <Route path="/webhooks" component={Webhooks} />
+      <Route path="/404" component={NotFound} />      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>
   );

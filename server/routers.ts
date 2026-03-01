@@ -4,7 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { getDb } from "./db";
-import { clients, appointments, interactions, pipelineStages, notifications } from "../drizzle/schema";
+import { clients, appointments, interactions, pipelineStages, notifications, webhooks } from "../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 
 export const appRouter = router({
@@ -264,6 +264,79 @@ export const appRouter = router({
         return db.update(notifications)
           .set({ read: 1 })
           .where(and(eq(notifications.id, input.id), eq(notifications.userId, ctx.user.id)));
+      }),
+  }),
+
+  /**
+   * Webhooks Router
+   */
+  webhooks: router({
+    list: protectedProcedure.query(async ({ ctx }) => {
+      const db = await getDb();
+      if (!db) return [];
+      return db.select().from(webhooks)
+        .where(eq(webhooks.userId, ctx.user.id));
+    }),
+
+    create: protectedProcedure
+      .input(z.object({
+        name: z.string().min(1),
+        url: z.string().url(),
+        service: z.enum(["whatsapp", "telegram", "slack", "discord", "custom"]),
+        isActive: z.number().default(1),
+        events: z.string().optional(),
+        headers: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        
+        return db.insert(webhooks).values({
+          userId: ctx.user.id,
+          ...input,
+        });
+      }),
+
+    update: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        name: z.string().optional(),
+        url: z.string().url().optional(),
+        service: z.enum(["whatsapp", "telegram", "slack", "discord", "custom"]).optional(),
+        isActive: z.number().optional(),
+        events: z.string().optional(),
+        headers: z.string().optional(),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        
+        const { id, ...updateData } = input;
+        return db.update(webhooks)
+          .set(updateData)
+          .where(and(eq(webhooks.id, id), eq(webhooks.userId, ctx.user.id)));
+      }),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        
+        return db.delete(webhooks)
+          .where(and(eq(webhooks.id, input.id), eq(webhooks.userId, ctx.user.id)));
+      }),
+
+    getById: protectedProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) return null;
+        
+        const result = await db.select().from(webhooks)
+          .where(and(eq(webhooks.id, input.id), eq(webhooks.userId, ctx.user.id)))
+          .limit(1);
+        return result.length > 0 ? result[0] : null;
       }),
   }),
 });

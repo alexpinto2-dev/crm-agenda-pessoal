@@ -103,3 +103,19 @@
 ## Bugs Corrigidos - Fase 2
 - [x] Agenda com erro ao acessar (SelectItem com value vazio)
 - [x] Assistente IA não estava funcionando (imports faltando)
+
+
+## Integração com LLM
+- [x] Implementar invokeLLM no Assistente
+- [x] Processar comandos em linguagem natural
+- [x] Agendar compromissos automaticamente via IA
+- [x] Buscar clientes por descrição
+- [x] Criar interações via linguagem natural
+
+## Sistema de Webhooks
+- [x] Criar tabela de webhooks no banco
+- [x] Implementar CRUD de webhooks
+- [x] Criar interface de configuração
+- [x] Integração com WhatsApp
+- [x] Integração com Telegram
+- [x] Integração com outros serviços

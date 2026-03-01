@@ -15,6 +15,13 @@
       "when": 1772214309498,
       "tag": "0001_mysterious_gauntlet",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1772389638260,
+      "tag": "0002_nosy_moon_knight",
+      "breakpoints": true
     }
   ]
 }

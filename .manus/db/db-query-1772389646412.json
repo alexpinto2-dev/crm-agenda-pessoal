@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `webhooks` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`userId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`url` text NOT NULL,\n\t`service` enum('whatsapp','telegram','slack','discord','custom') NOT NULL,\n\t`isActive` int DEFAULT 1,\n\t`events` text,\n\t`headers` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `webhooks_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3wMeUZqU6WZD3hZ.0e49a4cd5fe3 --database igX6zntjx4X6XQ5HyeTSSV --execute CREATE TABLE `webhooks` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`userId` int NOT NULL,\n\t`name` varchar(255) NOT NULL,\n\t`url` text NOT NULL,\n\t`service` enum('whatsapp','telegram','slack','discord','custom') NOT NULL,\n\t`isActive` int DEFAULT 1,\n\t`events` text,\n\t`headers` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `webhooks_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 511
+}

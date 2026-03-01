@@ -1,6 +1,6 @@
 import { eq, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, clients, appointments, interactions } from "../drizzle/schema";
+import { InsertUser, users, clients, appointments, interactions, webhooks, InsertWebhook } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -134,4 +134,39 @@ export async function getClientInteractions(clientId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(interactions).where(eq(interactions.clientId, clientId));
+}
+
+/**
+ * Webhooks queries
+ */
+export async function getUserWebhooks(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(webhooks).where(eq(webhooks.userId, userId));
+}
+
+export async function getWebhookById(webhookId: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+  const result = await db.select().from(webhooks).where(eq(webhooks.id, webhookId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function createWebhook(data: InsertWebhook) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(webhooks).values(data);
+  return result;
+}
+
+export async function updateWebhook(webhookId: number, data: Partial<InsertWebhook>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.update(webhooks).set(data).where(eq(webhooks.id, webhookId));
+}
+
+export async function deleteWebhook(webhookId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  return db.delete(webhooks).where(eq(webhooks.id, webhookId));
 }
