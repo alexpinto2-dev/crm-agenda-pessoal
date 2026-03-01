@@ -256,7 +256,7 @@ export default function Calendar() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="">Sem cliente</SelectItem>
+                            <SelectItem value="none">Sem cliente</SelectItem>
                             {clients.map(client => (
                               <SelectItem key={client.id} value={client.id.toString()}>
                                 {client.name}

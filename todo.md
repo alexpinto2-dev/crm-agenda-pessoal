@@ -99,3 +99,7 @@
 - [x] Erro 404 ao acessar página
 - [x] Login não está funcionando
 - [x] Roteamento quebrado
+
+## Bugs Corrigidos - Fase 2
+- [x] Agenda com erro ao acessar (SelectItem com value vazio)
+- [x] Assistente IA não estava funcionando (imports faltando)
