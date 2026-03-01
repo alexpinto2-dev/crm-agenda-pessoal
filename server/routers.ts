@@ -1,7 +1,6 @@
 import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { aiRouter } from "./aiRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
 import { getDb } from "./db";
@@ -10,7 +9,6 @@ import { eq, and } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
-  ai: aiRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {
@@ -122,15 +120,10 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database not available");
         
-        try {
-          return await db.insert(appointments).values({
-            userId: ctx.user.id,
-            ...input,
-          });
-        } catch (error) {
-          console.error("[Appointments] Erro ao criar compromisso:", error);
-          throw error;
-        }
+        return db.insert(appointments).values({
+          userId: ctx.user.id,
+          ...input,
+        });
       }),
 
     update: protectedProcedure

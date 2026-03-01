@@ -4,13 +4,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { trpc } from "@/lib/trpc";
-import { Plus, ChevronLeft, ChevronRight, Trash2, Edit2, Calendar as CalendarIcon, Clock, MapPin } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Trash2, Edit2, Calendar as CalendarIcon, Clock, MapPin, User } from "lucide-react";
 import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, isSameDay, addMonths, subMonths } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -116,9 +117,8 @@ export default function Calendar() {
       setEditingId(null);
       setSelectedDate(null);
       refetch();
-    } catch (error: any) {
-      console.error("Erro detalhado ao salvar compromisso:", error);
-      toast.error(`Erro ao salvar compromisso: ${error.message || "Erro desconhecido"}`);
+    } catch (error) {
+      toast.error("Erro ao salvar compromisso");
     }
   };
 
@@ -199,18 +199,20 @@ export default function Calendar() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Tipo</FormLabel>
-                        <FormControl>
-                          <select 
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            {...field}
-                          >
-                            <option value="meeting">Reunião</option>
-                            <option value="call">Ligação</option>
-                            <option value="email">Email</option>
-                            <option value="task">Tarefa</option>
-                            <option value="other">Outro</option>
-                          </select>
-                        </FormControl>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="meeting">Reunião</SelectItem>
+                            <SelectItem value="call">Ligação</SelectItem>
+                            <SelectItem value="email">Email</SelectItem>
+                            <SelectItem value="task">Tarefa</SelectItem>
+                            <SelectItem value="other">Outro</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -222,7 +224,7 @@ export default function Calendar() {
                       <FormItem>
                         <FormLabel>Data/Hora Início</FormLabel>
                         <FormControl>
-                          <Input type="datetime-local" {...field} value={field.value instanceof Date && !isNaN(field.value.getTime()) ? format(field.value, "yyyy-MM-dd'T'HH:mm") : ""} onChange={(e) => { const d = new Date(e.target.value); if(!isNaN(d.getTime())) field.onChange(d); }} />
+                          <Input type="datetime-local" {...field} value={field.value ? format(field.value, "yyyy-MM-dd'T'HH:mm") : ""} onChange={(e) => field.onChange(new Date(e.target.value))} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -247,20 +249,21 @@ export default function Calendar() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Cliente (Opcional)</FormLabel>
-                        <FormControl>
-                          <select 
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                            value={field.value?.toString() || "none"}
-                            onChange={(e) => field.onChange(e.target.value === "none" ? undefined : parseInt(e.target.value))}
-                          >
-                            <option value="none">Sem cliente</option>
+                        <Select onValueChange={(v) => field.onChange(v ? parseInt(v) : undefined)} defaultValue={field.value?.toString()}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Selecione um cliente" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="">Sem cliente</SelectItem>
                             {clients.map(client => (
-                              <option key={client.id} value={client.id.toString()}>
+                              <SelectItem key={client.id} value={client.id.toString()}>
                                 {client.name}
-                              </option>
+                              </SelectItem>
                             ))}
-                          </select>
-                        </FormControl>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
