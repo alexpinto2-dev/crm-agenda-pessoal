@@ -2,6 +2,7 @@ import { COOKIE_NAME } from "@shared/const";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
+import { telegramRouter } from "./routers/telegram";
 import { z } from "zod";
 import { getDb } from "./db";
 import { clients, appointments, interactions, pipelineStages, notifications, webhooks } from "../drizzle/schema";
@@ -339,6 +340,8 @@ export const appRouter = router({
         return result.length > 0 ? result[0] : null;
       }),
   }),
+
+  telegram: telegramRouter,
 });
 
 export type AppRouter = typeof appRouter;

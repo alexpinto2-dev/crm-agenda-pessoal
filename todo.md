@@ -119,3 +119,11 @@
 - [x] Integração com WhatsApp
 - [x] Integração com Telegram
 - [x] Integração com outros serviços
+
+
+## Integração Telegram
+- [x] Configurar bot do Telegram
+- [x] Implementar webhook para receber mensagens
+- [x] Processar comandos de agendamento via Telegram
+- [x] Enviar notificações de reuniões
+- [x] Testar integração completa
