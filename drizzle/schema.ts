@@ -60,6 +60,8 @@ export const appointments = mysqlTable("appointments", {
   location: varchar("location", { length: 255 }),
   status: mysqlEnum("appointmentStatus", ["scheduled", "completed", "cancelled", "rescheduled"]).default("scheduled").notNull(),
   notificationMinutes: int("notificationMinutes").default(15),
+  googleEventId: varchar("googleEventId", { length: 255 }),
+  googleCalendarAccessToken: text("googleCalendarAccessToken"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

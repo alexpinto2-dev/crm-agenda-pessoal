@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { telegramRouter } from "./routers/telegram";
+import { googleCalendarRouter } from "./routers/googlecalendar";
 import { z } from "zod";
 import { getDb } from "./db";
 import { clients, appointments, interactions, pipelineStages, notifications, webhooks } from "../drizzle/schema";
@@ -342,6 +343,7 @@ export const appRouter = router({
   }),
 
   telegram: telegramRouter,
+  googleCalendar: googleCalendarRouter,
 });
 
 export type AppRouter = typeof appRouter;

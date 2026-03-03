@@ -11,6 +11,7 @@ import Clients from "./pages/Clients";
 import Calendar from "./pages/Calendar";
 import Assistant from "./pages/Assistant";
 import Webhooks from "./pages/Webhooks";
+import GoogleCalendarSettings from "./pages/GoogleCalendarSettings";
 function Router() {
   // make sure to consider if you need authentication for certain routes
   return (
@@ -22,6 +23,7 @@ function Router() {
       <Route path="/calendar" component={Calendar} />
       <Route path="/assistente" component={Assistant} />
       <Route path="/webhooks" component={Webhooks} />
+      <Route path="/google-calendar" component={GoogleCalendarSettings} />
       <Route path="/404" component={NotFound} />      {/* Final fallback route */}
       <Route component={NotFound} />
     </Switch>

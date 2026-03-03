@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/sidebar";
 import { getLoginUrl } from "@/const";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, Calendar, MessageSquare, Home, Zap } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, Calendar, MessageSquare, Home, Zap, Globe } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -34,6 +34,7 @@ const menuItems = [
   { icon: Calendar, label: "Agenda", path: "/calendar" },
   { icon: MessageSquare, label: "Assistente", path: "/assistente" },
   { icon: Zap, label: "Webhooks", path: "/webhooks" },
+  { icon: Globe, label: "Google Calendar", path: "/google-calendar" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

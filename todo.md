@@ -127,3 +127,12 @@
 - [x] Processar comandos de agendamento via Telegram
 - [x] Enviar notificações de reuniões
 - [x] Testar integração completa
+
+
+## Integração Google Calendar
+- [x] Configurar Google Calendar API
+- [x] Implementar autenticação OAuth com Google
+- [x] Criar serviço de sincronização
+- [x] Sincronizar compromissos automaticamente
+- [x] Criar interface de configuração
+- [x] Testar sincronização completa
