@@ -170,3 +170,20 @@ export async function deleteWebhook(webhookId: number) {
   if (!db) throw new Error("Database not available");
   return db.delete(webhooks).where(eq(webhooks.id, webhookId));
 }
+
+// Interactions
+export async function createInteraction(data: any) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const result = await db.insert(interactions).values(data);
+  return result;
+}
+
+export async function getInteractionsByClientId(userId: number, clientId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  const { eq: eqOp, and: andOp } = await import("drizzle-orm");
+  return db.select().from(interactions).where(
+    andOp(eqOp(interactions.userId, userId), eqOp(interactions.clientId, clientId))
+  );
+}

@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
-import { ArrowRight, BarChart3, Calendar, Users, MessageSquare, LogOut, Chrome } from "lucide-react";
+import { ArrowRight, BarChart3, Calendar, Users, MessageSquare, LogOut, Chrome, Zap, Globe, CheckCircle2, Sparkles } from "lucide-react";
 import { useEffect } from "react";
 import { getLoginUrl } from "@/const";
 
@@ -29,73 +29,134 @@ export default function Home() {
   }
 
   if (!isAuthenticated) {
-    const handleGoogleLogin = () => {
-      // Usar o fluxo OAuth padrão da Manus
-      window.location.href = getLoginUrl();
-    };
-
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800 flex items-center justify-center px-4">
-        <div className="max-w-2xl w-full text-center space-y-8">
-          <div className="space-y-4">
-            <h1 className="text-5xl font-bold tracking-tight">CRM+ Agenda Pessoal</h1>
-            <p className="text-xl text-muted-foreground">
-              Gerencie seus clientes, leads e compromissos de forma elegante e profissional
-            </p>
-          </div>
+        <div className="max-w-4xl w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Features */}
+            <div className="space-y-8">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
+                  <Sparkles className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-600 dark:text-blue-400">Gerenciamento Inteligente</span>
+                </div>
+                <h1 className="text-5xl lg:text-6xl font-bold tracking-tight">
+                  CRM+ Agenda Pessoal
+                </h1>
+                <p className="text-xl text-muted-foreground max-w-lg">
+                  Transforme seu relacionamento com clientes em oportunidades de crescimento
+                </p>
+              </div>
 
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-elegant p-8 space-y-6">
-            <div className="space-y-4">
-              <h2 className="text-2xl font-semibold">Bem-vindo ao CRM+ Agenda Pessoal</h2>
-              <p className="text-muted-foreground">
-                Faça login para acessar seu sistema de gerenciamento de relacionamento com clientes integrado com agenda pessoal.
-              </p>
+              <div className="space-y-4">
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Gerenciar Clientes & Leads</h3>
+                    <p className="text-sm text-muted-foreground">Pipeline visual com Kanban, filtros avançados e histórico completo de interações</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Agenda Integrada</h3>
+                    <p className="text-sm text-muted-foreground">Calendário interativo com sincronização automática ao Google Calendar</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Assistente IA</h3>
+                    <p className="text-sm text-muted-foreground">Chat inteligente para agendar compromissos e organizar clientes por linguagem natural</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-4">
+                  <div className="flex-shrink-0 mt-1">
+                    <CheckCircle2 className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Integrações Poderosas</h3>
+                    <p className="text-sm text-muted-foreground">Telegram, Webhooks, Google Calendar e muito mais</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <Button
+                  size="lg"
+                  onClick={() => window.location.href = getLoginUrl()}
+                  className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white shadow-lg"
+                >
+                  <Chrome className="mr-2 h-5 w-5" />
+                  Começar Agora com Google
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="text-xs text-muted-foreground text-center mt-3">
+                  Sem cartão de crédito. Acesso instantâneo.
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-3">
-              <Button
-                size="lg"
-                onClick={handleGoogleLogin}
-                className="w-full bg-white dark:bg-slate-700 text-foreground border border-border hover:bg-gray-50 dark:hover:bg-slate-600"
-              >
-                <Chrome className="mr-2 h-5 w-5" />
-                Entrar com Google
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+            {/* Right Side - Showcase */}
+            <div className="hidden lg:block space-y-4">
+              {/* Dashboard Preview Card */}
+              <div className="bg-white dark:bg-slate-800 rounded-xl shadow-elegant p-6 space-y-4 border border-border/50">
+                <div className="flex items-center gap-2">
+                  <BarChart3 className="h-5 w-5 text-blue-600" />
+                  <h3 className="font-semibold">Dashboard Inteligente</h3>
+                </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                    <span className="text-sm">Total de Clientes</span>
+                    <span className="font-bold text-lg">47</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                    <span className="text-sm">Compromissos Hoje</span>
+                    <span className="font-bold text-lg">4</span>
+                  </div>
+                  <div className="flex justify-between items-center p-3 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
+                    <span className="text-sm">Taxa de Conversão</span>
+                    <span className="font-bold text-lg">28%</span>
+                  </div>
+                </div>
+              </div>
 
-              <p className="text-xs text-muted-foreground">
-                Você será redirecionado para autenticação segura
-              </p>
-            </div>
-          </div>
+              {/* Features Grid */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="bg-gradient-to-br from-blue-500/10 to-blue-600/10 dark:from-blue-500/20 dark:to-blue-600/20 rounded-lg p-4 border border-blue-200/50 dark:border-blue-800/50">
+                  <Calendar className="h-5 w-5 text-blue-600 mb-2" />
+                  <p className="text-sm font-medium">Agenda Sincronizada</p>
+                  <p className="text-xs text-muted-foreground">Com Google Calendar</p>
+                </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-8">
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-card">
-              <Users className="h-8 w-8 text-blue-600 mb-3" />
-              <h3 className="font-semibold mb-2">Gerenciar Clientes</h3>
-              <p className="text-sm text-muted-foreground">Organize seus clientes e leads com filtros avançados</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-card">
-              <Calendar className="h-8 w-8 text-green-600 mb-3" />
-              <h3 className="font-semibold mb-2">Agenda Integrada</h3>
-              <p className="text-sm text-muted-foreground">Calendário interativo para seus compromissos</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-card">
-              <BarChart3 className="h-8 w-8 text-purple-600 mb-3" />
-              <h3 className="font-semibold mb-2">Dashboard Analytics</h3>
-              <p className="text-sm text-muted-foreground">Visualize métricas e performance em tempo real</p>
-            </div>
-            <div className="bg-white dark:bg-slate-800 rounded-lg p-6 shadow-card">
-              <MessageSquare className="h-8 w-8 text-amber-600 mb-3" />
-              <h3 className="font-semibold mb-2">Assistente IA</h3>
-              <p className="text-sm text-muted-foreground">Chat inteligente para gerenciar seu CRM</p>
-            </div>
-          </div>
+                <div className="bg-gradient-to-br from-purple-500/10 to-purple-600/10 dark:from-purple-500/20 dark:to-purple-600/20 rounded-lg p-4 border border-purple-200/50 dark:border-purple-800/50">
+                  <MessageSquare className="h-5 w-5 text-purple-600 mb-2" />
+                  <p className="text-sm font-medium">Assistente IA</p>
+                  <p className="text-xs text-muted-foreground">Linguagem Natural</p>
+                </div>
 
-          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
-            <p className="text-sm text-blue-900 dark:text-blue-100">
-              💡 <strong>Dica:</strong> Use sua conta Google para fazer login de forma rápida e segura
-            </p>
+                <div className="bg-gradient-to-br from-green-500/10 to-green-600/10 dark:from-green-500/20 dark:to-green-600/20 rounded-lg p-4 border border-green-200/50 dark:border-green-800/50">
+                  <Zap className="h-5 w-5 text-green-600 mb-2" />
+                  <p className="text-sm font-medium">Webhooks</p>
+                  <p className="text-xs text-muted-foreground">Telegram & Mais</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-amber-500/10 to-amber-600/10 dark:from-amber-500/20 dark:to-amber-600/20 rounded-lg p-4 border border-amber-200/50 dark:border-amber-800/50">
+                  <Globe className="h-5 w-5 text-amber-600 mb-2" />
+                  <p className="text-sm font-medium">Integrações</p>
+                  <p className="text-xs text-muted-foreground">APIs Completas</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -105,7 +166,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-900 dark:to-slate-800">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-800 shadow-card border-b border-border">
+      <header className="bg-white dark:bg-slate-800 shadow-card border-b border-border sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <h1 className="text-2xl font-bold">CRM+ Agenda Pessoal</h1>
           <div className="flex items-center gap-4">

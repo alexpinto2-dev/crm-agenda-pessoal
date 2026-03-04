@@ -136,3 +136,16 @@
 - [x] Sincronizar compromissos automaticamente
 - [x] Criar interface de configuração
 - [x] Testar sincronização completa
+
+
+## Vinculação de Histórico com Agenda
+- [ ] Atualizar schema para vincular appointments com interactions
+- [ ] Criar automáticamente interaction ao agendar compromisso
+- [ ] Exibir interações da agenda no histórico do cliente
+- [ ] Testar vinculação completa
+
+
+## Melhorias de UI
+- [x] Adicionar data e horário aos próximos compromissos no Dashboard
+- [x] Transformar tela de Início em apresentação elegante
+- [x] Testar interface melhorada

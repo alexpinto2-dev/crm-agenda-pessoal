@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { trpc } from "@/lib/trpc";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 import { Calendar, Users, TrendingUp, Clock } from "lucide-react";
-import { formatDistanceToNow, isToday, isBefore, addDays } from "date-fns";
+import { formatDistanceToNow, isToday, isBefore, addDays, format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 export default function Dashboard() {
@@ -160,9 +160,14 @@ export default function Dashboard() {
                   <div key={appointment.id} className="flex items-start justify-between p-3 border border-border rounded-lg hover:bg-muted/50 transition-colors">
                     <div className="flex-1">
                       <p className="font-medium text-sm">{appointment.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {formatDistanceToNow(new Date(appointment.startTime), { addSuffix: true, locale: ptBR })}
-                      </p>
+                      <div className="flex gap-3 mt-1">
+                        <p className="text-xs text-muted-foreground">
+                          📅 {format(new Date(appointment.startTime), "dd/MM/yyyy", { locale: ptBR })}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          🕐 {format(new Date(appointment.startTime), "HH:mm")}
+                        </p>
+                      </div>
                     </div>
                     <span className="badge-status bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100">
                       {appointment.type}
