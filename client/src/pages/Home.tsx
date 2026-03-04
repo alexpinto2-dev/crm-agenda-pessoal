@@ -9,12 +9,7 @@ export default function Home() {
   const { user, isAuthenticated, logout, loading } = useAuth();
   const [, navigate] = useLocation();
 
-  // Redirecionar para dashboard se autenticado
-  useEffect(() => {
-    if (isAuthenticated && user && !loading) {
-      navigate("/dashboard");
-    }
-  }, [isAuthenticated, user, navigate, loading]);
+  // Não redirecionar automaticamente - deixar usuário ver a tela de Início
 
   // Mostrar tela de carregamento
   if (loading) {

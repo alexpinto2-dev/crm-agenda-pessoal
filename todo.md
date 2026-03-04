@@ -149,3 +149,7 @@
 - [x] Adicionar data e horário aos próximos compromissos no Dashboard
 - [x] Transformar tela de Início em apresentação elegante
 - [x] Testar interface melhorada
+
+
+## Bugs a Corrigir - Fase 3
+- [x] Tela de Início não está diferente do Dashboard
