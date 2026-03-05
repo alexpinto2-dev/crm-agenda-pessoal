@@ -95,6 +95,21 @@ export const appRouter = router({
           .limit(1);
         return result.length > 0 ? result[0] : null;
       }),
+
+    updateStatus: protectedProcedure
+      .input(z.object({
+        id: z.number(),
+        status: z.enum(["em_qualificacao", "em_negociacao", "proposta_enviada", "cliente_fechado", "cliente_desistiu"]),
+      }))
+      .mutation(async ({ ctx, input }) => {
+        const db = await getDb();
+        if (!db) throw new Error("Database not available");
+        
+        const result = await db.update(clients)
+          .set({ status: input.status })
+          .where(and(eq(clients.id, input.id), eq(clients.userId, ctx.user.id)));
+        return result;
+      }),
   }),
 
   /**

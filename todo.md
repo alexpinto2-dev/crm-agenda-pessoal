@@ -159,3 +159,11 @@
 - [x] Atualizar enum de status no schema
 - [x] Atualizar frontend para novos status
 - [x] Testar alterações
+
+
+## Drag-and-Drop para Kanban
+- [x] Instalar dependência @dnd-kit (compatível com React 19)
+- [x] Implementar componente Kanban com drag-and-drop
+- [x] Criar API tRPC para atualizar status via drag-and-drop
+- [x] Adicionar testes unitários para drag-and-drop
+- [x] Testar funcionalidade completa

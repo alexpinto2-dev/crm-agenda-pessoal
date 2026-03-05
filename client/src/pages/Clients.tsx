@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { KanbanBoard } from "@/components/KanbanBoard";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,7 @@ export default function Clients() {
   const createMutation = trpc.clients.create.useMutation();
   const updateMutation = trpc.clients.update.useMutation();
   const deleteMutation = trpc.clients.delete.useMutation();
+  const updateStatusMutation = trpc.clients.updateStatus.useMutation();
 
   const form = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -101,29 +103,26 @@ export default function Clients() {
     setIsOpen(true);
   };
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "lead":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100";
-      case "prospect":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100";
-      case "customer":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100";
-      case "inactive":
-        return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-100";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
   const getStatusLabel = (status: string) => {
     const labels: Record<string, string> = {
-      lead: "Lead",
-      prospect: "Prospect",
-      customer: "Cliente",
-      inactive: "Inativo",
+      em_qualificacao: "Em Qualificação",
+      em_negociacao: "Em Negociação",
+      proposta_enviada: "Proposta Enviada",
+      cliente_fechado: "Cliente Fechado",
+      cliente_desistiu: "Cliente Desistiu",
     };
     return labels[status] || status;
+  };
+
+  const getStatusColor = (status: string) => {
+    const colors: Record<string, string> = {
+      em_qualificacao: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100",
+      em_negociacao: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-100",
+      proposta_enviada: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-100",
+      cliente_fechado: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100",
+      cliente_desistiu: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100",
+    };
+    return colors[status] || "bg-gray-100 text-gray-800";
   };
 
   const statusGroups = {
@@ -230,10 +229,11 @@ export default function Clients() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="lead">Lead</SelectItem>
-                            <SelectItem value="prospect">Prospect</SelectItem>
-                            <SelectItem value="customer">Cliente</SelectItem>
-                            <SelectItem value="inactive">Inativo</SelectItem>
+                            <SelectItem value="em_qualificacao">Em Qualificação</SelectItem>
+                            <SelectItem value="em_negociacao">Em Negociação</SelectItem>
+                            <SelectItem value="proposta_enviada">Proposta Enviada</SelectItem>
+                            <SelectItem value="cliente_fechado">Cliente Fechado</SelectItem>
+                            <SelectItem value="cliente_desistiu">Cliente Desistiu</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -257,7 +257,7 @@ export default function Clients() {
                     <Button type="button" variant="outline" onClick={() => setIsOpen(false)}>
                       Cancelar
                     </Button>
-                    <Button type="submit" disabled={createMutation.isPending || updateMutation.isPending}>
+                    <Button type="submit">
                       {editingId ? "Atualizar" : "Criar"} Cliente
                     </Button>
                   </div>
@@ -303,10 +303,11 @@ export default function Clients() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">Todos os Status</SelectItem>
-                  <SelectItem value="lead">Lead</SelectItem>
-                  <SelectItem value="prospect">Prospect</SelectItem>
-                  <SelectItem value="customer">Cliente</SelectItem>
-                  <SelectItem value="inactive">Inativo</SelectItem>
+                  <SelectItem value="em_qualificacao">Em Qualificação</SelectItem>
+                  <SelectItem value="em_negociacao">Em Negociação</SelectItem>
+                  <SelectItem value="proposta_enviada">Proposta Enviada</SelectItem>
+                  <SelectItem value="cliente_fechado">Cliente Fechado</SelectItem>
+                  <SelectItem value="cliente_desistiu">Cliente Desistiu</SelectItem>
                 </SelectContent>
               </Select>
               <Tabs value={viewMode} onValueChange={(v) => setViewMode(v as any)} className="w-full md:w-auto">
@@ -404,66 +405,43 @@ export default function Clients() {
           </Card>
         )}
 
-        {/* Vista Kanban */}
+        {/* Vista Kanban com Drag-and-Drop */}
         {viewMode === "kanban" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {Object.entries(statusGroups).map(([status, statusClients]) => (
-              <div key={status} className="bg-muted/50 rounded-lg p-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-semibold flex items-center gap-2">
-                    <span className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(status)}`}>
-                      {getStatusLabel(status)}
-                    </span>
-                    <span className="text-sm text-muted-foreground">({statusClients.length})</span>
-                  </h3>
-                </div>
-                <div className="space-y-2">
-                  {statusClients.map((client) => (
-                    <div
-                      key={client.id}
-                      className="bg-white dark:bg-slate-800 rounded-lg p-3 shadow-card hover:shadow-elegant transition-all cursor-pointer"
-                      onClick={() => navigate(`/clients/${client.id}`)}
-                    >
-                      <div className="flex items-start gap-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          {client.name.charAt(0).toUpperCase()}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm truncate">{client.name}</p>
-                          {client.company && <p className="text-xs text-muted-foreground truncate">{client.company}</p>}
-                          {client.email && <p className="text-xs text-muted-foreground truncate">{client.email}</p>}
-                        </div>
-                      </div>
-                      <div className="flex gap-1 mt-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleEdit(client);
-                          }}
-                        >
-                          <Edit2 className="h-3 w-3" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-7 w-7 p-0"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDelete(client.id);
-                          }}
-                        >
-                          <Trash2 className="h-3 w-3 text-red-500" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
+          <Card className="shadow-card">
+            <CardHeader>
+              <CardTitle>Pipeline de Vendas</CardTitle>
+              <CardDescription>Arraste os clientes entre os status</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <KanbanBoard
+                statusGroups={statusGroups}
+                statusLabels={{
+                  em_qualificacao: "Em Qualificação",
+                  em_negociacao: "Em Negociação",
+                  proposta_enviada: "Proposta Enviada",
+                  cliente_fechado: "Cliente Fechado",
+                  cliente_desistiu: "Cliente Desistiu",
+                }}
+                statusColors={{
+                  em_qualificacao: getStatusColor("em_qualificacao"),
+                  em_negociacao: getStatusColor("em_negociacao"),
+                  proposta_enviada: getStatusColor("proposta_enviada"),
+                  cliente_fechado: getStatusColor("cliente_fechado"),
+                  cliente_desistiu: getStatusColor("cliente_desistiu"),
+                }}
+                onStatusChange={async (clientId, newStatus) => {
+                  await updateStatusMutation.mutateAsync({
+                    id: clientId,
+                    status: newStatus as any,
+                  });
+                  refetch();
+                }}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+                onClientClick={(client) => navigate(`/clients/${client.id}`)}
+              />
+            </CardContent>
+          </Card>
         )}
       </div>
     </DashboardLayout>
