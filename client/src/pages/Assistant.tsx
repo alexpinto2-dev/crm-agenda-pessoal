@@ -62,13 +62,14 @@ export default function Assistant() {
         // Estatísticas de clientes
         const stats = {
           total: clients.length,
-          leads: clients.filter(c => c.status === "lead").length,
-          prospects: clients.filter(c => c.status === "prospect").length,
-          customers: clients.filter(c => c.status === "customer").length,
-          inactive: clients.filter(c => c.status === "inactive").length,
+          em_qualificacao: clients.filter(c => c.status === "em_qualificacao").length,
+          em_negociacao: clients.filter(c => c.status === "em_negociacao").length,
+          proposta_enviada: clients.filter(c => c.status === "proposta_enviada").length,
+          cliente_fechado: clients.filter(c => c.status === "cliente_fechado").length,
+          cliente_desistiu: clients.filter(c => c.status === "cliente_desistiu").length,
         };
-        assistantResponse = `📊 **Estatísticas de Clientes**\n\n- **Total**: ${stats.total} clientes\n- **Leads**: ${stats.leads}\n- **Prospects**: ${stats.prospects}\n- **Clientes**: ${stats.customers}\n- **Inativos**: ${stats.inactive}\n\n**Taxa de Conversão**: ${stats.total > 0 ? ((stats.customers / stats.total) * 100).toFixed(1) : 0}%`;
-      } else if (lowerInput.includes("cliente") || lowerInput.includes("lead")) {
+        assistantResponse = `📊 **Estatísticas de Clientes**\n\n- **Total**: ${stats.total} clientes\n- **Em Qualificação**: ${stats.em_qualificacao}\n- **Em Negociação**: ${stats.em_negociacao}\n- **Proposta Enviada**: ${stats.proposta_enviada}\n- **Cliente Fechado**: ${stats.cliente_fechado}\n- **Cliente Desistiu**: ${stats.cliente_desistiu}\n\n**Taxa de Conversão**: ${stats.total > 0 ? ((stats.cliente_fechado / stats.total) * 100).toFixed(1) : 0}%`;
+      } else if (lowerInput.includes("cliente") || lowerInput.includes("qualificacao")) {
         // Listar clientes
         if (clients.length === 0) {
           assistantResponse = "Você não possui clientes registrados ainda. Gostaria de adicionar um novo cliente? Vá para a seção de **Clientes** para criar um novo registro.";

@@ -14,7 +14,7 @@ export default function Dashboard() {
 
   // Calcular métricas
   const totalClients = clients.length;
-  const activeClients = clients.filter(c => c.status !== "inactive").length;
+  const activeClients = clients.filter(c => c.status !== "cliente_desistiu").length;
   const todayAppointments = appointments.filter(a => isToday(new Date(a.startTime)));
   const upcomingAppointments = appointments.filter(a => {
     const date = new Date(a.startTime);
@@ -23,9 +23,11 @@ export default function Dashboard() {
 
   // Dados para gráficos
   const clientsByStatus = [
-    { name: "Leads", value: clients.filter(c => c.status === "lead").length, color: "#3B82F6" },
-    { name: "Prospects", value: clients.filter(c => c.status === "prospect").length, color: "#8B5CF6" },
-    { name: "Clientes", value: clients.filter(c => c.status === "customer").length, color: "#10B981" },
+    { name: "Em Qualificação", value: clients.filter(c => c.status === "em_qualificacao").length, color: "#3B82F6" },
+    { name: "Em Negociação", value: clients.filter(c => c.status === "em_negociacao").length, color: "#8B5CF6" },
+    { name: "Proposta Enviada", value: clients.filter(c => c.status === "proposta_enviada").length, color: "#F59E0B" },
+    { name: "Cliente Fechado", value: clients.filter(c => c.status === "cliente_fechado").length, color: "#10B981" },
+    { name: "Cliente Desistiu", value: clients.filter(c => c.status === "cliente_desistiu").length, color: "#EF4444" },
   ];
 
   const appointmentsByType = [
@@ -86,7 +88,7 @@ export default function Dashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">
-                {totalClients > 0 ? Math.round((clients.filter(c => c.status === "customer").length / totalClients) * 100) : 0}%
+                {totalClients > 0 ? Math.round((clients.filter(c => c.status === "cliente_fechado").length / totalClients) * 100) : 0}%
               </div>
               <p className="text-xs text-muted-foreground">De leads para clientes</p>
             </CardContent>

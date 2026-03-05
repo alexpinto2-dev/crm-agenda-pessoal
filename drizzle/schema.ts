@@ -35,7 +35,7 @@ export const clients = mysqlTable("clients", {
   email: varchar("email", { length: 320 }),
   phone: varchar("phone", { length: 20 }),
   company: varchar("company", { length: 255 }),
-  status: mysqlEnum("status", ["lead", "prospect", "customer", "inactive"]).default("lead").notNull(),
+  status: mysqlEnum("status", ["em_qualificacao", "em_negociacao", "proposta_enviada", "cliente_fechado", "cliente_desistiu"]).default("em_qualificacao").notNull(),
   pipelineStage: varchar("pipelineStage", { length: 50 }).default("initial").notNull(),
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

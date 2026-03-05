@@ -1,0 +1,8 @@
+{
+  "query": "UPDATE `clients` SET `status` = 'em_qualificacao' WHERE `status` = 'lead';\nUPDATE `clients` SET `status` = 'em_negociacao' WHERE `status` = 'prospect';\nUPDATE `clients` SET `status` = 'cliente_fechado' WHERE `status` = 'customer';\nUPDATE `clients` SET `status` = 'cliente_desistiu' WHERE `status` = 'inactive';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway03.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 3wMeUZqU6WZD3hZ.0e49a4cd5fe3 --database igX6zntjx4X6XQ5HyeTSSV --execute UPDATE `clients` SET `status` = 'em_qualificacao' WHERE `status` = 'lead';\nUPDATE `clients` SET `status` = 'em_negociacao' WHERE `status` = 'prospect';\nUPDATE `clients` SET `status` = 'cliente_fechado' WHERE `status` = 'customer';\nUPDATE `clients` SET `status` = 'cliente_desistiu' WHERE `status` = 'inactive';",
+  "returncode": 1,
+  "logs": [
+    "ERROR 1265 (01000) at line 1: Data truncated for column '%s' at row %d"
+  ]
+}

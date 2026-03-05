@@ -20,7 +20,7 @@ const clientSchema = z.object({
   email: z.string().email("Email inválido").optional().or(z.literal("")),
   phone: z.string().optional(),
   company: z.string().optional(),
-  status: z.enum(["lead", "prospect", "customer", "inactive"]),
+  status: z.enum(["em_qualificacao", "em_negociacao", "proposta_enviada", "cliente_fechado", "cliente_desistiu"]),
   notes: z.string().optional(),
 });
 
@@ -46,7 +46,7 @@ export default function Clients() {
       email: "",
       phone: "",
       company: "",
-      status: "lead",
+      status: "em_qualificacao",
       notes: "",
     },
   });
@@ -127,16 +127,17 @@ export default function Clients() {
   };
 
   const statusGroups = {
-    lead: clients.filter(c => c.status === "lead"),
-    prospect: clients.filter(c => c.status === "prospect"),
-    customer: clients.filter(c => c.status === "customer"),
-    inactive: clients.filter(c => c.status === "inactive"),
+    em_qualificacao: clients.filter(c => c.status === "em_qualificacao"),
+    em_negociacao: clients.filter(c => c.status === "em_negociacao"),
+    proposta_enviada: clients.filter(c => c.status === "proposta_enviada"),
+    cliente_fechado: clients.filter(c => c.status === "cliente_fechado"),
+    cliente_desistiu: clients.filter(c => c.status === "cliente_desistiu"),
   };
 
   const stats = [
-    { label: "Total de Clientes", value: clients.filter(c => c.status === "customer").length, icon: Users, color: "text-green-600" },
-    { label: "Prospects", value: clients.filter(c => c.status === "prospect").length, icon: TrendingUp, color: "text-purple-600" },
-    { label: "Leads", value: clients.filter(c => c.status === "lead").length, icon: Users, color: "text-blue-600" },
+    { label: "Cliente Fechado", value: clients.filter(c => c.status === "cliente_fechado").length, icon: Users, color: "text-green-600" },
+    { label: "Em Negociação", value: clients.filter(c => c.status === "em_negociacao").length, icon: TrendingUp, color: "text-purple-600" },
+    { label: "Em Qualificação", value: clients.filter(c => c.status === "em_qualificacao").length, icon: Users, color: "text-blue-600" },
   ];
 
   return (

@@ -153,3 +153,9 @@
 
 ## Bugs a Corrigir - Fase 3
 - [x] Tela de Início não está diferente do Dashboard
+
+
+## Alteração de Status do Pipeline
+- [x] Atualizar enum de status no schema
+- [x] Atualizar frontend para novos status
+- [x] Testar alterações

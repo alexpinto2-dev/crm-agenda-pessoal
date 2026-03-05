@@ -38,7 +38,7 @@ export const appRouter = router({
         email: z.string().email().optional(),
         phone: z.string().optional(),
         company: z.string().optional(),
-        status: z.enum(["lead", "prospect", "customer", "inactive"]).default("lead"),
+        status: z.enum(["em_qualificacao", "em_negociacao", "proposta_enviada", "cliente_fechado", "cliente_desistiu"]).default("em_qualificacao"),
         notes: z.string().optional(),
       }))
       .mutation(async ({ ctx, input }) => {
@@ -59,7 +59,7 @@ export const appRouter = router({
         email: z.string().email().optional(),
         phone: z.string().optional(),
         company: z.string().optional(),
-        status: z.enum(["lead", "prospect", "customer", "inactive"]).optional(),
+        status: z.enum(["em_qualificacao", "em_negociacao", "proposta_enviada", "cliente_fechado", "cliente_desistiu"]).optional(),
         pipelineStage: z.string().optional(),
         notes: z.string().optional(),
       }))

@@ -45,7 +45,7 @@ describe("clients router", () => {
       email: "john@example.com",
       phone: "(11) 99999-9999",
       company: "Acme Corp",
-      status: "lead" as const,
+      status: "em_qualificacao" as const,
       notes: "Test client",
     };
 
@@ -63,7 +63,7 @@ describe("clients router", () => {
       email: "jane@example.com",
       phone: "(11) 88888-8888",
       company: "Tech Inc",
-      status: "prospect" as const,
+      status: "em_negociacao" as const,
     };
 
     const createResult = await caller.clients.create(clientData);
@@ -77,7 +77,7 @@ describe("clients router", () => {
     const clientData = {
       name: "Update Test",
       email: "update@example.com",
-      status: "customer" as const,
+      status: "cliente_fechado" as const,
     };
 
     const createResult = await caller.clients.create(clientData);
@@ -91,7 +91,7 @@ describe("clients router", () => {
     const clientData = {
       name: "Delete Test",
       email: "delete@example.com",
-      status: "inactive" as const,
+      status: "cliente_desistiu" as const,
     };
 
     const createResult = await caller.clients.create(clientData);
