@@ -208,3 +208,11 @@
 - [x] Configurar credenciais do Google Calendar OAuth
 - [x] Validar credenciais com testes
 - [x] Testar sincronização com Google Calendar (56 testes passando)
+
+
+## Teste de Sincronização Google Calendar
+- [x] Criar cliente de teste (ID: 420050)
+- [x] Criar compromisso de teste (ID: 420037)
+- [x] Verificar se compromisso aparece na Agenda
+- [x] Verificar se evento foi sincronizado no Google Calendar
+- [ ] Corrigir criação automática de interação quando compromisso é criado via tRPC
