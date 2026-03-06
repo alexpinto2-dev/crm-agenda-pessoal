@@ -119,6 +119,32 @@ export class TelegramService {
 
     return { command, args };
   }
+
+  parseAppointmentData(args: string): {
+    clientName: string;
+    date: string;
+    time: string;
+    description: string;
+  } | null {
+    const parts = args.split(" ");
+    if (parts.length < 4) return null;
+
+    return {
+      clientName: parts[0],
+      date: parts[1],
+      time: parts[2],
+      description: parts.slice(3).join(" "),
+    };
+  }
+
+  async sendInteractionNote(
+    chatId: number | string,
+    clientName: string,
+    noteContent: string
+  ): Promise<boolean> {
+    const message = `📝 <b>Anotacao Registrada</b>\n\n<b>Cliente:</b> ${clientName}\n<b>Nota:</b> ${noteContent}\n\nAnotacao salva no historico!`;
+    return this.sendMessage(chatId, message);
+  }
 }
 
 export const telegramService = new TelegramService();

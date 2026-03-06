@@ -29,10 +29,26 @@ export const telegramRouter = router({
             "👋 Bem-vindo ao CRM+ Agenda!\n\nUse os comandos:\n/agendar - Agendar um compromisso\n/clientes - Listar clientes\n/proximos - Ver próximos compromissos"
           );
         } else if (command?.command === "agendar") {
-          await telegramService.sendMessage(
-            chatId,
-            "📅 Para agendar um compromisso, use o formato:\n/agendar [cliente] [data] [hora] [descrição]\n\nExemplo:\n/agendar João 01/03/2026 14:00 Reunião de vendas"
-          );
+          if (!command.args) {
+            await telegramService.sendMessage(
+              chatId,
+              "📅 Para agendar um compromisso, use o formato:\n/agendar [cliente] [data] [hora] [descrição]\n\nExemplo:\n/agendar João 01/03/2026 14:00 Reunião de vendas"
+            );
+          } else {
+            const appointmentData = telegramService.parseAppointmentData(command.args);
+            if (appointmentData) {
+              // TODO: Create appointment in database
+              await telegramService.sendMessage(
+                chatId,
+                `✅ Compromisso agendado!\n\n👤 Cliente: ${appointmentData.clientName}\n📅 Data: ${appointmentData.date}\n🕐 Hora: ${appointmentData.time}\n📝 Descrição: ${appointmentData.description}`
+              );
+            } else {
+              await telegramService.sendMessage(
+                chatId,
+                "❌ Formato inválido. Use: /agendar [cliente] [data] [hora] [descrição]"
+              );
+            }
+          }
         } else if (command?.command === "clientes") {
           const db = await getDb();
           if (db) {

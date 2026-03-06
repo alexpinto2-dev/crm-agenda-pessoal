@@ -176,3 +176,12 @@
 - [x] Vinculação automática de interações
 - [x] Adicionar 6 testes unitários para vinculação
 - [x] Testar vinculação completa (39 testes passando)
+
+
+## Correção e Integração Telegram
+- [x] Debugar e corrigir Kanban drag-and-drop (import duplicado resolvido)
+- [x] Limpar cadastros de teste do banco de dados
+- [x] Configurar token do Telegram bot (validado com sucesso)
+- [x] Implementar handlers do Telegram para agendamentos automáticos
+- [x] Adicionar testes para integração Telegram (3 testes)
+- [x] Testar funcionalidades completas (42 testes passando)
