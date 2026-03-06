@@ -5,6 +5,7 @@ import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerGoogleCalendarCallback } from "./google-calendar-callback";
+import { registerTelegramWebhook } from "./telegram-webhook";
 import { appRouter } from "../routers";
 import { createContext } from "./context";
 import { serveStatic, setupVite } from "./vite";
@@ -38,6 +39,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Google Calendar callback
   registerGoogleCalendarCallback(app);
+  // Telegram webhook
+  registerTelegramWebhook(app);
   // tRPC API
   app.use(
     "/api/trpc",

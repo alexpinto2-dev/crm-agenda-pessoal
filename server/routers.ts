@@ -3,6 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { telegramRouter } from "./routers/telegram";
+import { telegramHandlersRouter } from "./routers/telegramHandlers";
 import { googleCalendarRouter } from "./routers/googlecalendar";
 import { gptmakerRouter } from "./routers/gptmaker";
 import { z } from "zod";
@@ -398,6 +399,7 @@ export const appRouter = router({
   }),
 
   telegram: telegramRouter,
+  telegramHandlers: telegramHandlersRouter,
   googleCalendar: googleCalendarRouter,
   gptmaker: gptmakerRouter,
 });

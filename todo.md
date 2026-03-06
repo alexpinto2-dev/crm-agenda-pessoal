@@ -216,3 +216,13 @@
 - [x] Verificar se compromisso aparece na Agenda
 - [x] Verificar se evento foi sincronizado no Google Calendar
 - [ ] Corrigir criação automática de interação quando compromisso é criado via tRPC
+
+
+## Configuração Bot Telegram Alex
+- [x] Configurar token do Telegram bot Alex (validado)
+- [x] Implementar handlers para atualizações de compromissos
+- [x] Implementar handlers para atualizações de clientes
+- [x] Implementar comando de agendamento automático (/agendar)
+- [x] Implementar webhook para receber mensagens do Telegram (/api/telegram/webhook)
+- [x] Adicionar testes para integração Telegram (6 testes)
+- [x] Testar funcionalidade completa (62 testes passando)
