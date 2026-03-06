@@ -8,10 +8,14 @@ export class GoogleCalendarService {
   private oauth2Client: any;
 
   constructor() {
+    // Use the correct redirect URI for Google Calendar OAuth
+    const baseUrl = process.env.VITE_FRONTEND_FORGE_API_URL || "http://localhost:3000";
+    const redirectUri = `${baseUrl}/api/google-calendar/callback`;
+    
     this.oauth2Client = new google.auth.OAuth2(
       ENV.googleCalendarClientId,
       ENV.googleCalendarClientSecret,
-      `${process.env.VITE_FRONTEND_FORGE_API_URL || "http://localhost:3000"}/api/oauth/callback`
+      redirectUri
     );
   }
 

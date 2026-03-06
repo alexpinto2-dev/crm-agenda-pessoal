@@ -200,3 +200,9 @@
 - [x] Atualizar frontend para exibir respostas do agente (GPTMakerChat.tsx)
 - [x] Adicionar testes para integração GPT Maker (9 testes)
 - [x] Testar funcionalidade completa (56 testes passando)
+
+
+## Correção de Sincronização Google Calendar
+- [x] Corrigir erro redirect_uri_mismatch
+- [x] Atualizar URL de callback do Google Calendar (/api/google-calendar/callback)
+- [x] Testar sincronização com Google Calendar (56 testes passando)
