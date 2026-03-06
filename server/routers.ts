@@ -7,7 +7,8 @@ import { googleCalendarRouter } from "./routers/googlecalendar";
 import { z } from "zod";
 import { getDb } from "./db";
 import { clients, appointments, interactions, pipelineStages, notifications, webhooks } from "../drizzle/schema";
-import { eq, and } from "drizzle-orm";
+import { InsertInteraction } from "../drizzle/schema";
+import { eq, and, desc } from "drizzle-orm";
 
 export const appRouter = router({
   system: systemRouter,
@@ -137,10 +138,48 @@ export const appRouter = router({
         const db = await getDb();
         if (!db) throw new Error("Database not available");
         
-        return db.insert(appointments).values({
+        // Create appointment
+        const appointmentResult = await db.insert(appointments).values({
           userId: ctx.user.id,
           ...input,
         });
+
+        // If clientId is provided, create interaction automatically
+        if (input.clientId) {
+          // Fetch the newly created appointment to get its ID
+          const createdAppointments = await db.select().from(appointments)
+            .where(and(
+              eq(appointments.userId, ctx.user.id),
+              eq(appointments.title, input.title),
+              eq(appointments.clientId, input.clientId)
+            ))
+            .orderBy(appointments.createdAt)
+            .limit(1);
+
+          if (createdAppointments.length > 0) {
+            const appointmentId = createdAppointments[0].id;
+            
+            // Map appointment type to interaction type
+            const interactionTypeMap: Record<string, "meeting" | "call" | "email" | "note" | "other"> = {
+              meeting: "meeting",
+              call: "call",
+              email: "email",
+              task: "note",
+              other: "other",
+            };
+
+            await db.insert(interactions).values({
+              userId: ctx.user.id,
+              clientId: input.clientId,
+              appointmentId: appointmentId,
+              type: interactionTypeMap[input.type] || "note",
+              title: input.title,
+              content: input.description || `Compromisso agendado: ${input.title}`,
+            });
+          }
+        }
+
+        return appointmentResult;
       }),
 
     update: protectedProcedure

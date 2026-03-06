@@ -167,3 +167,12 @@
 - [x] Criar API tRPC para atualizar status via drag-and-drop
 - [x] Adicionar testes unitários para drag-and-drop
 - [x] Testar funcionalidade completa
+
+
+## Vinculação de Histórico com Agenda
+- [x] Schema já possui appointmentId em interactions
+- [x] Criar API tRPC para criar interaction ao agendar appointment
+- [x] Componente de agenda já suporta seleção de cliente
+- [x] Vinculação automática de interações
+- [x] Adicionar 6 testes unitários para vinculação
+- [x] Testar vinculação completa (39 testes passando)
