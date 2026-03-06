@@ -140,3 +140,21 @@ export const webhooks = mysqlTable("webhooks", {
 
 export type Webhook = typeof webhooks.$inferSelect;
 export type InsertWebhook = typeof webhooks.$inferInsert;
+
+/**
+ * Mensagens do Agente GPT Maker
+ */
+export const gptmakerMessages = mysqlTable("gptmakerMessages", {
+  id: int("id").autoincrement().primaryKey(),
+  clientId: int("clientId").notNull(),
+  conversationId: varchar("conversationId", { length: 255 }).notNull(),
+  userMessage: text("userMessage").notNull(),
+  agentResponse: text("agentResponse"),
+  status: mysqlEnum("status", ["pending", "sent", "received", "error"]).default("pending").notNull(),
+  error: text("error"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GPTMakerMessage = typeof gptmakerMessages.$inferSelect;
+export type InsertGPTMakerMessage = typeof gptmakerMessages.$inferInsert;

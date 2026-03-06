@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { telegramRouter } from "./routers/telegram";
 import { googleCalendarRouter } from "./routers/googlecalendar";
+import { gptmakerRouter } from "./routers/gptmaker";
 import { z } from "zod";
 import { getDb } from "./db";
 import { clients, appointments, interactions, pipelineStages, notifications, webhooks } from "../drizzle/schema";
@@ -398,6 +399,7 @@ export const appRouter = router({
 
   telegram: telegramRouter,
   googleCalendar: googleCalendarRouter,
+  gptmaker: gptmakerRouter,
 });
 
 export type AppRouter = typeof appRouter;

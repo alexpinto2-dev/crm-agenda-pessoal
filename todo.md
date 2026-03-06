@@ -186,3 +186,17 @@
 - [x] Adicionar testes para integração Telegram (3 testes)
 - [x] Testar funcionalidades completas (42 testes passando)
 - [x] Limpar webhooks de teste deixando apenas um de cada tipo
+
+
+## Limpeza de Testes de Agendamento
+- [x] Apagar todos os testes de agendamento do banco de dados
+- [x] Deixar apenas um exemplo de cada tipo
+
+## Integração com GPT Maker
+- [x] Configurar credenciais da API GPT Maker (validadas)
+- [x] Criar serviço de integração com GPT Maker (gptmaker.ts)
+- [x] Implementar webhook para receber respostas do agente
+- [x] Criar API tRPC para enviar mensagens ao agente (gptmakerRouter)
+- [x] Atualizar frontend para exibir respostas do agente (GPTMakerChat.tsx)
+- [x] Adicionar testes para integração GPT Maker (9 testes)
+- [x] Testar funcionalidade completa (56 testes passando)

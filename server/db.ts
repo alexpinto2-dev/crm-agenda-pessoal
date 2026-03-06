@@ -1,6 +1,6 @@
 import { eq, and, gte, lte } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, clients, appointments, interactions, webhooks, InsertWebhook } from "../drizzle/schema";
+import { InsertUser, users, clients, appointments, interactions, webhooks, gptmakerMessages, InsertWebhook } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;

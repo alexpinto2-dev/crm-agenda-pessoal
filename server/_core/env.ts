@@ -10,4 +10,7 @@ export const ENV = {
   telegramBotToken: process.env.TELEGRAM_BOT_TOKEN ?? "",
   googleCalendarClientId: process.env.GOOGLE_CALENDAR_CLIENT_ID ?? "",
   googleCalendarClientSecret: process.env.GOOGLE_CALENDAR_CLIENT_SECRET ?? "",
+  gptmakerAuthToken: process.env.GPTMAKER_AUTH_TOKEN ?? "",
+  gptmakerAgentId: process.env.GPTMAKER_AGENT_ID ?? "",
+  gptmakerApiUrl: process.env.GPTMAKER_API_URL ?? "",
 };
