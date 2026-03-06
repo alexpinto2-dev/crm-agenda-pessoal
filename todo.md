@@ -205,4 +205,6 @@
 ## Correção de Sincronização Google Calendar
 - [x] Corrigir erro redirect_uri_mismatch
 - [x] Atualizar URL de callback do Google Calendar (/api/google-calendar/callback)
+- [x] Configurar credenciais do Google Calendar OAuth
+- [x] Validar credenciais com testes
 - [x] Testar sincronização com Google Calendar (56 testes passando)
