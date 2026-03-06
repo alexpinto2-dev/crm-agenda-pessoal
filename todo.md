@@ -185,3 +185,4 @@
 - [x] Implementar handlers do Telegram para agendamentos automáticos
 - [x] Adicionar testes para integração Telegram (3 testes)
 - [x] Testar funcionalidades completas (42 testes passando)
+- [x] Limpar webhooks de teste deixando apenas um de cada tipo
